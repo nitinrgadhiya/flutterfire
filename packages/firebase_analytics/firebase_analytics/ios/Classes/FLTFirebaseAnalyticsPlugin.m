@@ -15,6 +15,10 @@ NSString *const kFLTFirebaseAnalyticsEventName = @"eventName";
 NSString *const kFLTFirebaseAnalyticsParameters = @"parameters";
 NSString *const kFLTFirebaseAnalyticsAdStorageConsentGranted = @"adStorageConsentGranted";
 NSString *const kFLTFirebaseAnalyticsStorageConsentGranted = @"analyticsStorageConsentGranted";
+NSString *const kFLTFirebaseAnalyticsAdUserDataConsentGranted = @"adUserDataConsentGranted";
+NSString *const kFLTFirebaseAnalyticsAdPersonalizationSignalsConsentGranted = @"adPersonalizationConsentGranted";
+
+
 NSString *const kFLTFirebaseAnalyticsUserId = @"userId";
 
 NSString *const FLTFirebaseAnalyticsChannelName = @"plugins.flutter.io/firebase_analytics";
@@ -137,17 +141,31 @@ NSString *const FLTFirebaseAnalyticsChannelName = @"plugins.flutter.io/firebase_
 - (void)setConsent:(id)arguments withMethodCallResult:(FLTFirebaseMethodCallResult *)result {
   NSNumber *adStorageGranted = arguments[kFLTFirebaseAnalyticsAdStorageConsentGranted];
   NSNumber *analyticsStorageGranted = arguments[kFLTFirebaseAnalyticsStorageConsentGranted];
+  NSNumber *adUserDataGranted = arguments[kFLTFirebaseAnalyticsAdUserDataConsentGranted];
+  NSNumber *adPersonalizationGranted = arguments[kFLTFirebaseAnalyticsAdPersonalizationSignalsConsentGranted];
+
   NSMutableDictionary<FIRConsentType, FIRConsentStatus> *parameters =
       [[NSMutableDictionary alloc] init];
 
   if (adStorageGranted != nil) {
-    parameters[FIRConsentTypeAdStorage] =
+      parameters[FIRConsentTypeAdStorage] =
         [adStorageGranted boolValue] ? FIRConsentStatusGranted : FIRConsentStatusDenied;
   }
   if (analyticsStorageGranted != nil) {
+//      NSLog(@"words analyticsStorageGranted :: %@", analyticsStorageGranted);
     parameters[FIRConsentTypeAnalyticsStorage] =
         [analyticsStorageGranted boolValue] ? FIRConsentStatusGranted : FIRConsentStatusDenied;
   }
+
+    if (adUserDataGranted != nil) {
+        parameters[FIRConsentTypeAdUserData] =
+                [adUserDataGranted boolValue] ? FIRConsentStatusGranted : FIRConsentStatusDenied;
+    }
+
+    if (adPersonalizationGranted != nil) {
+        parameters[FIRConsentTypeAdPersonalization] =
+                [adPersonalizationGranted boolValue] ? FIRConsentStatusGranted : FIRConsentStatusDenied;
+    }
 
   [FIRAnalytics setConsent:parameters];
   result.success(nil);
